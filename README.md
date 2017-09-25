@@ -2,6 +2,7 @@
 Miner Away denies any website's attempt to use your browser as a cryptocurrency miner.
 
 [Opera Web Store] (https://addons.opera.com/en/extensions/details/miner-away/?display=en)
+[Chrome Web Store] (https://chrome.google.com/webstore/detail/miner-away/fogeciakcpgnbjjnacoddpofmlebchnn?hl=pt-BR)
 
 ### Features
 - Blocks any JavaScript or web based miners
