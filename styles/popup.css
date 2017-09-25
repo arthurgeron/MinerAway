@@ -1,0 +1,120 @@
+/**
+ * Miner Away - Stop coin miners in your browser
+ **
+ * @author      Arthur Geron  <arthur.geron>
+ * @version     0.9
+ * @license     GNULGPL3.0
+ * @source      https://github.com/arthurgeron/MinerAway
+ */
+ @font-face {
+    font-family: 'Somatic'; /*a name to be used later*/
+    src: url('/font/Somatic-Rounded.otf'); /*URL to font*/
+}
+
+h3 {
+    text-align: center;
+}
+
+
+#status {
+    background-color: white !important;
+    background-image: none;
+}
+
+#status.green {
+    color: #269f42;
+}
+
+#status.red {
+    color: #cb2431;
+}
+
+.logo {
+    width: 9em;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+select {
+    color: white;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    border: 0px;
+    outline: 0px;
+    text-align-last:center; /*Only works in Chrome/Opera*/
+    font-size: 1em;
+}
+
+option {
+    width: 100%;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+    outline: none;
+}
+html {
+    height: 110px;
+}
+body {
+    font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+    overflow: auto; 
+    width: 174px;
+    margin: 6px;
+    height: 90px;
+}
+
+.header {
+    font-family: "Somatic";
+    margin: 5px 20px;
+}
+
+.title {
+    display: inline;
+    font-size: 22px;
+}
+
+.actions {
+    width: 100%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.actions li {
+    display: block;
+    color: white;
+    background-color: #808080;
+    text-align: center;
+    font-size: 1em;
+    padding: 5px 0;
+    cursor: pointer;
+    margin: 6px 0;
+    border-radius: 0.25em;
+}
+.button {
+    border: 1px solid rgba(27,31,35,0.2);
+    border-radius: 0.25em;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s; 
+}
+.button:hover {
+    box-shadow: 0 5px 5px 0 rgba(0,0,0,0.24),0 3px 50px 0 rgba(0,0,0,0.19);
+    border-color: rgba(27,31,35,0.5)    
+}
+.green {
+    background-color: #28a745;
+    background-image: linear-gradient(-180deg, #34d058 0%, #28a745 90%);
+}
+
+.green:hover {
+    background-color: #269f42;
+    background-image: linear-gradient(-180deg, #2fcb53 0%, #269f42 90%);
+}
+
+.red {
+    background-color: #cb2431;
+    background-image: linear-gradient(-180deg, #de4450 0%, #cb2431 90%);
+}

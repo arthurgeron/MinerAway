@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <title>Miner Away</title>
+        <link rel="stylesheet" type="text/css" href="../styles/popup.css" />
+    </head>
+    <body>
+        <a href="https://github.com/arthurgeron/MinerAway">
+            <div class="header">
+                <img src="../img/logo.png" class="logo" />
+            </div>
+        </a>
+        <hr />
+        <div>
+            <h3>Current Status: </h3>
+            <h3 id='status' class='green'><h3>
+        </div>
+        <hr />
+        <ul class="actions">
+            <li class="toggle button green">Enable Miner Away</li>
+            <li class="whitelist button green"> 
+                <select class="list">
+                    <option value="None">White list for</option>
+                    <option value="1">White list for 1 minute</option>
+                    <option value="30">White list for 30 minutes</option>
+                    <option value="0">White permanently</option>
+                </select></li>
+            <li class="list blacklist button red">Remove from white list</li>
+        </ul>
+        <script src="../js/popup.js"></script>    
+    </body>
+</html>

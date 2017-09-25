@@ -1,0 +1,28 @@
+{
+    "name": "Miner Away",
+    "description": "Stop coin miners on the web!",
+    "version": "1.0",
+    "permissions": [
+        "activeTab",
+        "tabs",
+        "<all_urls>",
+        "webRequest",
+        "webRequestBlocking",
+        "notifications"
+    ],
+    "background": {
+        "scripts": ["js/background.js"],
+        "persistent": true
+    },
+    "icons": {
+        "128": "img/logo.png" 
+    },
+    "browser_action": {
+        "default_title": "Miner Away - Stop coin miners on the web.",
+        "default_icon": "img/logo.png",
+        "default_popup": "view/popup.html"
+    },
+    "manifest_version": 2,
+    "minimum_chrome_version": "55",
+    "author": "Arthur Geron"
+}
