@@ -11,6 +11,14 @@
 let temp = {
     blockedTabs: []    
 }
+
+const reloadPage = () => {
+    chrome.tabs.query({active: true, currentWindow: true}, function (arrayOfTabs) {
+        var code = 'window.location.reload();';
+        chrome.tabs.executeScript(arrayOfTabs[0].id, {code: code});
+    });
+}
+
 const defaultConfig = {
     toggle: true,
     whitelist: [{
@@ -135,14 +143,15 @@ const addDomainToWhitelist = (domain, time) => {
 
     // Make sure the domain is not already whitelisted before adding it
     if (!isDomainWhitelisted(domain)) {
-        // config.whitelist = [
-        //     ...config.whitelist,
-        //     {
-        //         domain: domain,
-        //         expiration: time === 0 ? 0 : getTimestamp() + (time * 60),
-        //     },
-        // ];
+        config.whitelist = [
+            ...config.whitelist,
+            {
+                domain: domain,
+                expiration: time === 0 ? 0 : getTimestamp() + (time * 60),
+            },
+        ];
         saveConfig();
+        reloadPage();
     }
 };
 
@@ -151,6 +160,7 @@ const removeDomainFromWhitelist = (domain) => {
 
     config.whitelist = config.whitelist.filter(w => w.domain !== domain);
     saveConfig();
+    reloadPage();
 }
 const analyseCurrentTab = (domain, tabId) => {
     let isWhiteListed;
