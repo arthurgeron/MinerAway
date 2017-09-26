@@ -135,13 +135,13 @@ const addDomainToWhitelist = (domain, time) => {
 
     // Make sure the domain is not already whitelisted before adding it
     if (!isDomainWhitelisted(domain)) {
-        config.whitelist = [
-            ...config.whitelist,
-            {
-                domain: domain,
-                expiration: time === 0 ? 0 : getTimestamp() + (time * 60),
-            },
-        ];
+        // config.whitelist = [
+        //     ...config.whitelist,
+        //     {
+        //         domain: domain,
+        //         expiration: time === 0 ? 0 : getTimestamp() + (time * 60),
+        //     },
+        // ];
         saveConfig();
     }
 };
