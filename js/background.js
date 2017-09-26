@@ -16,8 +16,28 @@ const defaultConfig = {
     whitelist: [{
         domain: 'cnhv.co',
         expiration: 0,
-    }]
+    }],
+    count: 0
 };
+
+const totalBlockCounter = {
+    render: () => {
+        chrome.browserAction.setBadgeText({text: defaultConfig.count.toString()});
+    },
+    increase: () => {
+        defaultConfig.count++;
+        totalBlockCounter.render();
+    },
+
+    clear: () => {
+        defaultConfig.count = 0;
+        totalBlockCounter.render();
+    }
+}
+
+const sendTotalCounter = () => {
+    //chrome.runtime.sendMessage({type: 'BLOCKED_COUNT', count: defaultConfig.count });
+}
 
 const localConfig = JSON.parse(localStorage.getItem('config'));
 let config = {
@@ -28,7 +48,7 @@ let config = {
 // Load the blacklist and run the request checker
 
 const blacklist = chrome.runtime.getURL("blacklist.txt");
-let blacklistedUrls;
+let blacklistedUrls, lastSelectedTabId = 0;
 /**
  * Functions
  */
@@ -188,6 +208,15 @@ const tabChangedDomain = (tabId, domain) => {
     return false;
 } 
 
+const changedSelectedTab = (currentTabId) => {
+    if (lastSelectedTabId === currentTabId) {
+        return true;
+    } else {
+        return false;
+    }
+    lastSelectedTabId = currentTabId;
+}
+
 const removeMatchingTabId = (tabId) => {
     let tab = temp.blockedTabs.find(item => {return item.id === tabId});
     temp.blockedTabs.splice(temp.blockedTabs.indexOf(tab), 1);
@@ -200,6 +229,9 @@ chrome.tabs.onActivated.addListener((tabId, changeInfo, tab, details) => {
         } else {
             analyseCurrentTab(getDomain(tab.url), tabId);
         }
+    }
+    if (changedSelectedTab(tabId)) {
+        totalBlockCounter.clear(); 
     }
 });
 
@@ -252,6 +284,7 @@ fetch(blacklist)
                         if (!blackListContainsTabId(details.tabId)) {
                             temp.blockedTabs.push({id: details.tabId, domain: domain});
                         }
+                        totalBlockCounter.increase();
                         return { cancel: true };
                     } else {
                         action('OK', domain);
@@ -289,7 +322,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             changeToggleIcon(config.toggle);
             sendResponse(config.toggle);
             break;
-        case 'WHITELIST': {
+        case 'WHITELIST': 
             if (message.whitelisted) {
                 removeDomainFromWhitelist(domains[message.tabId], message.time);
             } else {
@@ -298,8 +331,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
             sendResponse(!message.whitelisted);
             break;
-        }
-        case 'STATUS': {
+        case 'STATUS': 
             chrome.tabs.query({
                 active: true,               // Select active tabs
                 lastFocusedWindow: true     // In the current window
@@ -308,6 +340,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     analyseCurrentTab(getDomain(tab[0].url), tab[0].id);
                 }           
             });
-        }
+            break;
+        case 'BLOCKED_COUNT': 
+            sendTotalCounter();
+            break;
     }
 });
+
+totalBlockCounter.render();

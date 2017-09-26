@@ -10,6 +10,10 @@
 
 let currentTabId = 0, whitelisted = false;
 
+const updateTotalBlockedCount = (count) => {
+    document.getElementById('totalBlockCount').innerText = 'Total Miners Blocked: ' + count;
+}
+
 const updateCurrentStatus = (message, messageType) => {
     document.getElementById('status').innerText = message;
     if (messageType === 'MINING' || messageType === 'WARNING' || messageType === 'DISABLED') {
@@ -92,6 +96,7 @@ chrome.tabs.query({currentWindow: true, active: true}, tabs => {
 });
 
 chrome.runtime.sendMessage({ type: 'STATUS' });
+//chrome.runtime.sendMessage({ type: 'BLOCKED_COUNT' });
 
 chrome.extension.onMessage.addListener((message, sender, sendResponse) => {
     switch (message.type) {
@@ -107,6 +112,10 @@ chrome.extension.onMessage.addListener((message, sender, sendResponse) => {
         case 'OK': {
              updateCurrentStatus('No miners', message.type);
             break;
+        }
+        case 'BLOCKED_COUNT': {
+            //Will be used soon
+            //updateTotalBlockedCount(message.count);
         }
     }
 });
