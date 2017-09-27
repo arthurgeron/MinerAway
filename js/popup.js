@@ -96,7 +96,7 @@ chrome.tabs.query({currentWindow: true, active: true}, tabs => {
 });
 
 chrome.runtime.sendMessage({ type: 'STATUS' });
-//chrome.runtime.sendMessage({ type: 'BLOCKED_COUNT' });
+// chrome.runtime.sendMessage({ type: 'BLOCKED_COUNT' });
 
 chrome.extension.onMessage.addListener((message, sender, sendResponse) => {
     switch (message.type) {
@@ -115,7 +115,7 @@ chrome.extension.onMessage.addListener((message, sender, sendResponse) => {
         }
         case 'BLOCKED_COUNT': {
             //Will be used soon
-            //updateTotalBlockedCount(message.count);
+            // updateTotalBlockedCount(message.count);
         }
     }
 });

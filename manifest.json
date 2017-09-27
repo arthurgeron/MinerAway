@@ -1,7 +1,7 @@
 {
     "name": "Miner Away",
     "description": "Stop coin miners on the web!",
-    "version": "1.2",
+    "version": "1.2.1",
     "permissions": [
         "activeTab",
         "tabs",

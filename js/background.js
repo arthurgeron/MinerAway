@@ -32,20 +32,14 @@ const isString = (object) => {
     return object !== undefined && object != null && object.toLowerCase !== undefined;
 }
 
-
+const storage = chrome.storage.local;
 //Iterates DefaultConfig's properties, adding them to storage, which correctly handles setting/getting data according to the browser 
 setPropertiesOn = (origin, destination) => {
     for (var property in origin) {
         if (origin.hasOwnProperty(property)) {
             Object.defineProperty(destination, property.toString(), {
-                get: function() {
-                    return (callback) => {
-                        destination.get(JSON.parse('{"'+property + '":"' + origin[property] + '"}'),callback);
-                    }
-                },
-                set: function(value) {
-                    destination.set(JSON.parse('{'+property.toString() + ':' + value + '}'));
-                }
+                value: destination[property] === undefined ? origin[property] : destination[property],
+                writable: true
             });
             if (Object.keys(origin[property]).length > 0 && !isString(origin[property])) {
                 setPropertiesOn(origin[property], destination[property]);
@@ -57,11 +51,8 @@ setPropertiesOn = (origin, destination) => {
 setPropertiesOn(defaultConfig, storage);
 const totalBlockCounter = {
     render: () => {
-        storage.count((count) => 
-        {
-                chrome.browserAction.setBadgeText({text: count[Object.keys(count)[0]]});
-        }
-    )},
+        chrome.browserAction.setBadgeText({text: storage.count.toString()});
+    },
     increase: () => {
         storage.count += 1;
         totalBlockCounter.render();
@@ -74,7 +65,7 @@ const totalBlockCounter = {
 }
 
 const sendTotalCounter = () => {
-    //chrome.runtime.sendMessage({type: 'BLOCKED_COUNT', count: storage.count });
+    chrome.runtime.sendMessage({type: 'BLOCKED_COUNT', count: storage.count });
 }
 
 const localConfig = JSON.parse(localStorage.getItem('config'));
@@ -142,7 +133,7 @@ const getTimestamp = () => {
 const isDomainWhitelisted = (domain) => {
     if (!domain) return false;
 
-    const domainInfo = config.whitelist.find(w => w.domain === domain);
+    const domainInfo = storage.whitelist.find(w => w.domain === domain);
 
     if (domainInfo) {
         if (domainInfo.expiration !== 0 && domainInfo.expiration <= getTimestamp()) {
@@ -173,8 +164,8 @@ const addDomainToWhitelist = (domain, time) => {
 
     // Make sure the domain is not already whitelisted before adding it
     if (!isDomainWhitelisted(domain)) {
-        config.whitelist = [
-            ...config.whitelist,
+        storage.whitelist = [
+            ...storage.whitelist,
             {
                 domain: domain,
                 expiration: time === 0 ? 0 : getTimestamp() + (time * 60),
@@ -188,7 +179,7 @@ const addDomainToWhitelist = (domain, time) => {
 const removeDomainFromWhitelist = (domain) => {
     if (!domain) return;
 
-    config.whitelist = config.whitelist.filter(w => w.domain !== domain);
+    storage.whitelist = storage.whitelist.filter(w => w.domain !== domain);
     saveConfig();
     reloadPage();
 }
@@ -196,7 +187,7 @@ const analyseCurrentTab = (domain, tabId) => {
     let isWhiteListed;
     let isInBlackList;
     let messageType;
-    if (!config.toggle) {
+    if (!storage.toggle) {
         action('DISABLED', domain)
     }
     else { 
@@ -228,7 +219,7 @@ const action = (messageType, domain) => {
         break;
     }
     if (message !== undefined) {
-        notify(messageType, message);
+        // notify(messageType, message);
     }
     chrome.runtime.sendMessage({ type: messageType });
 }
@@ -291,7 +282,7 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 });
 
 // Run with the right icon
-if (!config.toggle) {
+if (!storage.toggle) {
     changeToggleIcon(false);
 }
 
@@ -304,7 +295,7 @@ fetch(blacklist)
                 chrome.webRequest.onBeforeRequest.addListener(details => {
                     let domain = domains[details.tabId];
                     // Globally paused
-                    if (!config.toggle) {
+                    if (!storage.toggle) {
                         action('DISABLED', domain);
                         return { cancel: false };
                     }
@@ -352,15 +343,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         case 'GET_STATE':
             sendResponse({
                 whitelisted: isDomainWhitelisted(domains[message.tabId]),
-                toggle: config.toggle,
+                toggle: storage.toggle,
             });
             break;
         case 'TOGGLE':
-            config.toggle = !config.toggle;
+            storagetoggle = !storagetoggle;
             saveConfig();
 
-            changeToggleIcon(config.toggle);
-            sendResponse(config.toggle);
+            changeToggleIcon(storagetoggle);
+            sendResponse(storagetoggle);
             break;
         case 'WHITELIST': 
             if (message.whitelisted) {
@@ -382,7 +373,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             });
             break;
         case 'BLOCKED_COUNT': 
-            sendTotalCounter();
+            // sendTotalCounter();
             break;
     }
 });
