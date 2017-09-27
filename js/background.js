@@ -28,28 +28,58 @@ const defaultConfig = {
     count: 0
 };
 
+const isString = (object) => {
+    return object !== undefined && object != null && object.toLowerCase !== undefined;
+}
+
+
+//Iterates DefaultConfig's properties, adding them to storage, which correctly handles setting/getting data according to the browser 
+setPropertiesOn = (origin, destination) => {
+    for (var property in origin) {
+        if (origin.hasOwnProperty(property)) {
+            Object.defineProperty(destination, property.toString(), {
+                get: function() {
+                    return (callback) => {
+                        destination.get(JSON.parse('{"'+property + '":"' + origin[property] + '"}'),callback);
+                    }
+                },
+                set: function(value) {
+                    destination.set(JSON.parse('{'+property.toString() + ':' + value + '}'));
+                }
+            });
+            if (Object.keys(origin[property]).length > 0 && !isString(origin[property])) {
+                setPropertiesOn(origin[property], destination[property]);
+            }
+        }
+    }
+}
+
+setPropertiesOn(defaultConfig, storage);
 const totalBlockCounter = {
     render: () => {
-        chrome.browserAction.setBadgeText({text: defaultConfig.count.toString()});
-    },
+        storage.count((count) => 
+        {
+                chrome.browserAction.setBadgeText({text: count[Object.keys(count)[0]]});
+        }
+    )},
     increase: () => {
-        defaultConfig.count++;
+        storage.count += 1;
         totalBlockCounter.render();
     },
 
     clear: () => {
-        defaultConfig.count = 0;
+        storage.count = 0;
         totalBlockCounter.render();
     }
 }
 
 const sendTotalCounter = () => {
-    //chrome.runtime.sendMessage({type: 'BLOCKED_COUNT', count: defaultConfig.count });
+    //chrome.runtime.sendMessage({type: 'BLOCKED_COUNT', count: storage.count });
 }
 
 const localConfig = JSON.parse(localStorage.getItem('config'));
 let config = {
-    ...defaultConfig,
+    ...storage,
     ...localConfig,
 };
 
